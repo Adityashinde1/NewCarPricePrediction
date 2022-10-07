@@ -1,0 +1,25 @@
+train_model:
+  RandomForestRegressor:
+    max_depth:
+    - 5
+    - 8
+    - 10
+    max_features:
+    - 5
+    - 7
+    n_estimators:
+    - 50
+    - 100
+    - 150
+  XGBRegressor:
+    learning_rate:
+    - 0.1
+    - 0.01
+    max_depth:
+    - 5
+    - 8
+    - 12
+    n_estimators:
+    - 100
+    - 200
+base_model_score: '0.9263993622646278'
