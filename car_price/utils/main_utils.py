@@ -12,7 +12,6 @@ from sklearn.utils import all_estimators
 from yaml import safe_dump
 
 from car_price.constant import MODEL_CONFIG_FILE, SCHEMA_FILE_PATH, CONFIG_FILE_PATH
-from car_price.entity.config_entity import *
 from car_price.entity.tuner_config import *
 from car_price.exception import CarException
 import logging
@@ -221,11 +220,10 @@ class MainUtils:
         logging.info("Entered the get_car_list method of MainUtils class")
 
         try:
-            utils = MainUtils()
+            with open(CONFIG_FILE_PATH) as f:
+                data =  yaml.safe_load(f)
 
-            config = utils.read_yaml_file(CONFIG_FILE_PATH)
-
-            car_list = config["car_list"]
+            car_list = data["car_list"]
 
             logging.info("Exited the get_car_list method of MainUtils class")
 

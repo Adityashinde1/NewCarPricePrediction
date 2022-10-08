@@ -10,4 +10,5 @@ evidently==0.1.58.dev0
 category-encoders==2.5.1.post0
 fastapi==0.85.0
 uvicorn==0.18.3
+Jinja2==3.1.2
 -e .

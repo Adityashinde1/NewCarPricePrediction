@@ -71,9 +71,12 @@ async def trainRouteClient():
 @app.get("/")
 async def predictGetRouteClient(request: Request):
     try:
+        utils = MainUtils()
+
+        car_list = utils.get_car_list()
 
         return templates.TemplateResponse(
-            "car_price.html",{"request": request, "context": "Rendering"})
+            "car_price.html",{"request": request, "context": "Rendering", "car_list": car_list})
 
     except Exception as e:
         return Response(f"Error Occurred! {e}")
@@ -81,6 +84,10 @@ async def predictGetRouteClient(request: Request):
 @app.post("/")
 async def predictRouteClient(request: Request):
     try:
+        utils = MainUtils()
+
+        car_list = utils.get_car_list()
+
         form = DataForm(request)
         
         await form.get_car_data()
@@ -105,7 +112,7 @@ async def predictRouteClient(request: Request):
 
         return templates.TemplateResponse(
             "car_price.html",
-            {"request": request, "context": car_price_value}
+            {"request": request, "context": car_price_value, "car_list": car_list}
         )
 
     except Exception as e:
