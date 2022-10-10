@@ -22,4 +22,4 @@ train_model:
     n_estimators:
     - 100
     - 200
-base_model_score: '0.9197918865399634'
+base_model_score: '0.6'
