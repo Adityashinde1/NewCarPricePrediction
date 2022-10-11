@@ -1,6 +1,6 @@
 import shutil
 import sys
-from typing import Dict, Tuple
+from typing import Dict, Tuple, List
 import dill
 import xgboost
 import yaml
@@ -91,14 +91,14 @@ class MainUtils:
     def get_model_params(self, model: object, x_train: DataFrame, y_train: DataFrame) -> Dict:
         logging.info("Entered the get_model_params method of MainUtils class")
         try:
-            self.VERBOSE = 3
-            self.CV = 2
-            self.N_JOBS = -1
+            VERBOSE = 3
+            CV = 2
+            N_JOBS = -1
 
             model_name = model.__class__.__name__
             model_config = self.read_model_config_file()
             model_param_grid = model_config["train_model"][model_name]
-            model_grid = GridSearchCV(model, model_param_grid, verbose=self.VERBOSE, cv=self.CV, n_jobs=self.N_JOBS)
+            model_grid = GridSearchCV(model, model_param_grid, verbose=VERBOSE, cv=CV, n_jobs=N_JOBS)
             model_grid.fit(x_train, y_train)
             logging.info("Exited the get_model_params method of MainUtils class")
             return model_grid.best_params_
@@ -184,7 +184,7 @@ class MainUtils:
             raise CarException(e, sys) from e
 
 
-    def get_car_list(self):
+    def get_car_list(self) -> List:
         logging.info("Entered the get_car_list method of MainUtils class")
         try:
             with open(CONFIG_FILE_PATH) as f:

@@ -1,3 +1,5 @@
+import os
+from from_root import from_root
 from car_price.utils.main_utils import MainUtils
 from car_price.constant import *
 
@@ -9,6 +11,11 @@ class DataIngestionConfig:
         self.DB_NAME = DB_NAME
         self.COLLECTION_NAME = COLLECTION_NAME
         self.DROP_COLS = list(self.SCHEMA_CONFIG["drop_columns"])
+        self.ARTIFCATS_DIR = os.path.join(from_root(), ARTIFACTS_DIR, DATA_INGESTION_ARTIFACTS_DIR)
+        self.TRAIN_DATA_ARTIFACT_FILE_DIR = os.path.join(from_root(), ARTIFACTS_DIR, DATA_INGESTION_ARTIFACTS_DIR, DATA_INGESTION_TRAIN_DIR)
+        self.TEST_DATA_ARTIFACT_FILE_DIR = os.path.join(from_root(), ARTIFACTS_DIR, DATA_INGESTION_ARTIFACTS_DIR, DATA_INGESTION_TEST_DIR)
+        self.TRAIN_DATA_FILE_PATH = os.path.join(from_root(), ARTIFACTS_DIR, DATA_INGESTION_ARTIFACTS_DIR, DATA_INGESTION_TRAIN_DIR, DATA_INGESTION_TRAIN_FILE_NAME)
+        self.TEST_DATA_FILE_PATH = os.path.join(from_root(), ARTIFACTS_DIR, DATA_INGESTION_ARTIFACTS_DIR, DATA_INGESTION_TEST_DIR, DATA_INGESTION_TEST_FILE_NAME)
 
     def get_data_ingestion_config(self):
         return self.__dict__

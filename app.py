@@ -68,7 +68,7 @@ async def trainRouteClient():
     except Exception as e:
         return Response(f"Error Occurred! {e}")
 
-@app.get("/")
+@app.get("/predict")
 async def predictGetRouteClient(request: Request):
     try:
         utils = MainUtils()
@@ -81,7 +81,7 @@ async def predictGetRouteClient(request: Request):
     except Exception as e:
         return Response(f"Error Occurred! {e}")
 
-@app.post("/")
+@app.post("/predict")
 async def predictRouteClient(request: Request):
     try:
         utils = MainUtils()
@@ -108,7 +108,7 @@ async def predictRouteClient(request: Request):
         
         car_price_predictor = CarPricePredictor()
 
-        car_price_value = car_price_predictor.predict(X=car_price_df)
+        car_price_value = round(car_price_predictor.predict(X=car_price_df)[0], 2)
 
         return templates.TemplateResponse(
             "car_price.html",

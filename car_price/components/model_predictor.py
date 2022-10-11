@@ -74,8 +74,8 @@ class CarPricePredictor:
             )
             logging.info("Loaded best model from s3 bucket")
             result = best_model.predict(X)
-            result = DataFrame(list((result)), columns=["Prediction"])
             logging.info("Exited predict method of CarPricePredictor class")
+            return result
 
         except Exception as e:
             raise CarException(e, sys) from e

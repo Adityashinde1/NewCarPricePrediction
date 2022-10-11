@@ -9,6 +9,7 @@ __pycache__/
 
 demo.py
 artifacts
+cardekho_dataset.csv
 # Distribution / packaging
 .Python
 build/

@@ -30,7 +30,7 @@ class DataTransformation:
                 "Got numerical cols,one hot cols,binary cols from schema config"
             )
             numeric_transformer = StandardScaler()
-            oh_transformer = OneHotEncoder()
+            oh_transformer = OneHotEncoder(handle_unknown='ignore')
             binary_transformer = BinaryEncoder()
             logger.info("Initialized StandardScaler,OneHotEncoder,BinaryEncoder")
             preprocessor = ColumnTransformer(

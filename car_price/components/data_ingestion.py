@@ -1,5 +1,8 @@
-import logging
+from email import header
 import sys
+import os
+import logging
+from from_root import from_root
 from pandas import DataFrame
 from sklearn.model_selection import train_test_split
 from typing import Tuple
@@ -8,7 +11,7 @@ from car_price.configuration.mongo_operations import MongoDBOperation
 from car_price.entity.config_entity import DataIngestionConfig
 from car_price.constant import TEST_SIZE
 
-log_writer = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 
@@ -18,14 +21,14 @@ class DataIngestion:
         self.mongo_op = MongoDBOperation()
 
     def get_data_from_mongodb(self) -> DataFrame:
-        log_writer.info("Entered get_data_from_mongodb method of Data_Ingestion class")
+        logger.info("Entered get_data_from_mongodb method of Data_Ingestion class")
         try:
-            log_writer.info("Getting the dataframe from mongodb")
+            logger.info("Getting the dataframe from mongodb")
             df = self.mongo_op.get_collection_as_dataframe(
                 self.data_ingestion_config.DB_NAME, self.data_ingestion_config.COLLECTION_NAME
             )
-            log_writer.info("Got the dataframe from mongodb")
-            log_writer.info(
+            logger.info("Got the dataframe from mongodb")
+            logger.info(
                 "Exited the get_data_from_mongodb method of Data_Ingestion class"
             )
             return df
@@ -34,15 +37,24 @@ class DataIngestion:
             raise CarException(e, sys) from e
 
 
-    @staticmethod
-    def split_data_as_train_test(df:DataFrame) -> Tuple[DataFrame, DataFrame]:
-        log_writer.info(
+    def split_data_as_train_test(self, df:DataFrame) -> Tuple[DataFrame, DataFrame]:
+        logger.info(
             "Entered split_data_as_train_test method of Data_Ingestion class"
         )
         try:
+            os.makedirs(self.data_ingestion_config.ARTIFCATS_DIR, exist_ok=True)
             train_set, test_set = train_test_split(df, test_size=TEST_SIZE)
-            log_writer.info("Performed train test split on the dataframe")
-            log_writer.info(
+            logger.info("Performed train test split on the dataframe")
+            os.makedirs(self.data_ingestion_config.TRAIN_DATA_ARTIFACT_FILE_DIR, exist_ok=True)
+            logger.info(f"Created {os.path.basename(self.data_ingestion_config.TRAIN_DATA_ARTIFACT_FILE_DIR)} directory.")
+            os.makedirs(self.data_ingestion_config.TEST_DATA_ARTIFACT_FILE_DIR, exist_ok=True)
+            logger.info(f"Created {os.path.basename(self.data_ingestion_config.TEST_DATA_ARTIFACT_FILE_DIR)} directory.")
+            train_set.to_csv(self.data_ingestion_config.TRAIN_DATA_FILE_PATH, index=False, header=True)
+            test_set.to_csv(self.data_ingestion_config.TEST_DATA_FILE_PATH, index=False, header=True)
+            logger.info("Converted Train Dataframe and Test Dataframe into csv")            
+            logger.info(f"Saved {os.path.basename(self.data_ingestion_config.TRAIN_DATA_FILE_PATH)}, {os.path.basename(self.data_ingestion_config.TEST_DATA_FILE_PATH)} in {os.path.basename(self.data_ingestion_config.ARTIFCATS_DIR)}."
+            )
+            logger.info(
                 "Exited split_data_as_train_test method of Data_Ingestion class"
             )
             return train_set, test_set
@@ -52,16 +64,15 @@ class DataIngestion:
 
 
     def initiate_data_ingestion(self) -> Tuple[DataFrame, DataFrame]:
-        log_writer.info(
+        logger.info(
             "Entered initiate_data_ingestion method of Data_Ingestion class"
         )
         try:
             df = self.get_data_from_mongodb()
             df1 = df.drop(self.data_ingestion_config.DROP_COLS, axis=1)
-            log_writer.info("Got the data from mongodb")
+            logger.info("Got the data from mongodb")
             train_set, test_set = self.split_data_as_train_test(df1)
-            log_writer.info("Performed train test split on the dataset")
-            log_writer.info(
+            logger.info(
                 "Exited initiate_data_ingestion method of Data_Ingestion class"
             )
             return train_set, test_set
