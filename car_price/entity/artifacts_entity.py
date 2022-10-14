@@ -1,7 +1,4 @@
 from dataclasses import dataclass
-import os
-from from_root import from_root
-from car_price.constant import *
 
 
 @dataclass
@@ -26,7 +23,11 @@ class ModelTrainerArtifacts:
 
 @dataclass
 class ModelEvaluationArtifact:
-    is_model_accepted:bool
-    changed_accuracy:float
-    s3_model_path:str 
-    trained_model_path:str 
+    is_model_accepted: bool
+    trained_model_path: str
+    changed_accuracy: float
+
+@dataclass
+class ModelPusherArtifacts:
+    bucket_name: str
+    s3_model_path: str

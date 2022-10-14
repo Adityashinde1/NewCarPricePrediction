@@ -59,16 +59,14 @@ class ModelEvaluationConfig:
         self.S3_OPERATIONS = S3Operation()
         self.UTILS = MainUtils()
         self.BUCKET_NAME: str = BUCKET_NAME
+        self.BEST_MODEL_PATH: str = os.path.join(from_root(), ARTIFACTS_DIR, MODEL_TRAINER_ARTIFACTS_DIR, MODEL_FILE_NAME)
 
 
 @dataclass
 class ModelPusherConfig:
     def __init__(self):
-        self.BEST_MODEL_PATH = os.path.join(from_root(), ARTIFACTS_DIR, MODEL_TRAINER_ARTIFACTS_DIR, MODEL_FILE_NAME)
+        self.BEST_MODEL_PATH: str = os.path.join(from_root(), ARTIFACTS_DIR, MODEL_TRAINER_ARTIFACTS_DIR, MODEL_FILE_NAME)
+        self.BUCKET_NAME: str = BUCKET_NAME
+        self.S3_MODEL_KEY_PATH: str = os.path.join(S3_MODEL_NAME)
 
 
-@dataclass
-class S3Config:
-    def __init__(self):
-        self.IO_FILES_BUCKET = BUCKET_NAME
-        

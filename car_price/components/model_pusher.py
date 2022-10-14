@@ -1,40 +1,41 @@
 import sys
-import os
 from car_price.configuration.s3_operations import S3Operation
-from car_price.constant import PREPROCESSOR_OBJECT_FILE_NAME
-from car_price.entity.config_entity import S3Config
+from car_price.entity.artifacts_entity import DataTransformationArtifacts, ModelPusherArtifacts, ModelTrainerArtifacts
 from car_price.entity.config_entity import ModelPusherConfig
 from car_price.exception import CarException
 import logging
 
+logger = logging.getLogger(__name__)
 
 class ModelPusher:
-    def __init__(self, model_pusher_config: ModelPusherConfig, 
-                    s3: S3Operation, s3_config: S3Config):
+    def __init__(self, model_pusher_config: ModelPusherConfig, model_trainer_artifacts: ModelTrainerArtifacts, 
+                    data_transformation_artifacts: DataTransformationArtifacts,
+                    s3: S3Operation):
+
         self.model_pusher_config = model_pusher_config
+        self.model_trainer_artifacts = model_trainer_artifacts
+        self.data_transformation_artifacts = data_transformation_artifacts
         self.s3 = s3
-        self.s3_config = s3_config
 
 
-    def initiate_model_pusher(self) -> None:
-        logging.info("Entered initiate_model_pusher method of ModelTrainer class")
+    def initiate_model_pusher(self) -> ModelPusherArtifacts:
+        logger.info("Entered initiate_model_pusher method of ModelTrainer class")
         try:
-            logging.info("Uploading artifacts folder to s3 bucket")
+            logger.info("Uploading artifacts folder to s3 bucket")
             
             self.s3.upload_file(
-                self.model_pusher_config.BEST_MODEL_PATH,
-                self.model_pusher_config.BEST_MODEL_PATH,
-                self.s3_config.IO_FILES_BUCKET,
+                self.model_trainer_artifacts.trained_model_file_path,
+                self.model_pusher_config.S3_MODEL_KEY_PATH,
+                self.model_pusher_config.BUCKET_NAME,
                 remove=False,
             )
-            self.s3.upload_file(
-                PREPROCESSOR_OBJECT_FILE_NAME,
-                PREPROCESSOR_OBJECT_FILE_NAME,
-                self.s3_config.IO_FILES_BUCKET,
-                remove=False,
-            )
-            logging.info("Uploaded artifacts folder to s3 bucket")
-            logging.info("Exited initiate_model_pusher method of ModelTrainer class")
+            logger.info("Uploaded artifacts folder to s3 bucket")
+            logger.info("Exited initiate_model_pusher method of ModelTrainer class")
+
+            model_pusher_artifact = ModelPusherArtifacts(bucket_name=self.model_pusher_config.BUCKET_NAME, 
+                                                            s3_model_path=self.model_pusher_config.S3_MODEL_KEY_PATH)
+
+            return model_pusher_artifact
 
         except Exception as e:
             raise CarException(e, sys) from e

@@ -3,11 +3,11 @@ import sys
 from typing import Dict
 from pandas import DataFrame
 import pandas as pd
-from car_price.constant import ARTIFACTS_DIR, MODEL_FILE_NAME
+from car_price.constant import *
 from car_price.configuration.s3_operations import S3Operation
-from car_price.entity.config_entity import S3Config
 from car_price.exception import CarException
 
+logger = logging.getLogger(__name__)
 
 class CarData:
     def __init__(self, car_name, vehicle_age, km_driven, seller_type, fuel_type, transmission_type, mileage, engine, max_power, seats):
@@ -24,7 +24,7 @@ class CarData:
 
 
     def get_data(self) -> Dict:
-        logging.info("Entered get_data method of SensorData class")
+        logger.info("Entered get_data method of SensorData class")
         try:
             input_data = {
                 "car_name": [self.car_name],
@@ -45,13 +45,13 @@ class CarData:
 
 
     def get_carprice_input_data_frame(self) -> DataFrame:
-        logging.info(
+        logger.info(
             "Entered get_carprice_input_data_frame method of CarPriceData class"
         )
         try:
             carprice_input_dict = self.get_data()
-            logging.info("Got car data as dict")
-            logging.info(
+            logger.info("Got car data as dict")
+            logger.info(
                 "Exited get_carprice_input_data_frame method of CarPriceData class"
             )
             return pd.DataFrame(carprice_input_dict)
@@ -61,20 +61,18 @@ class CarData:
 
 
 class CarPricePredictor:
-    def __init__(self, s3: S3Operation, s3_config: S3Config):
-        self.s3 = s3
-        self.s3_config = s3_config
+    def __init__(self):
+        self.s3 = S3Operation()
+        self.bucket_name = BUCKET_NAME
 
 
     def predict(self, X) -> None:
-        logging.info("Entered predict method of CarPricePredictor class")
+        logger.info("Entered predict method of CarPricePredictor class")
         try:
-            best_model = self.s3.load_model(
-                MODEL_FILE_NAME, self.s3_config.IO_FILES_BUCKET, model_dir=ARTIFACTS_DIR
-            )
-            logging.info("Loaded best model from s3 bucket")
+            best_model = self.s3.load_model(MODEL_FILE_NAME, self.bucket_name)
+            logger.info("Loaded best model from s3 bucket")
             result = best_model.predict(X)
-            logging.info("Exited predict method of CarPricePredictor class")
+            logger.info("Exited predict method of CarPricePredictor class")
             return result
 
         except Exception as e:

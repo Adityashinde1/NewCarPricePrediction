@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from car_price.configuration.s3_operations import S3Operation
 from car_price.utils.main_utils import MainUtils
 
 from car_price.components.model_predictor import CarPricePredictor, CarData
@@ -85,11 +86,8 @@ async def predictGetRouteClient(request: Request):
 async def predictRouteClient(request: Request):
     try:
         utils = MainUtils()
-
         car_list = utils.get_car_list()
-
         form = DataForm(request)
-        
         await form.get_car_data()
         
         car_price_data = CarData(car_name= form.car_name, 
@@ -105,9 +103,7 @@ async def predictRouteClient(request: Request):
                                    )
         
         car_price_df = car_price_data.get_carprice_input_data_frame()
-        
         car_price_predictor = CarPricePredictor()
-
         car_price_value = round(car_price_predictor.predict(X=car_price_df)[0], 2)
 
         return templates.TemplateResponse(

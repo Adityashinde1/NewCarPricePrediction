@@ -30,12 +30,12 @@ class ModelEvaluation:
 
     def get_s3_model(self) -> object:
         try:
-            s3_model_key = os.path.join(S3_MODEL_ARTIFACT_DIRECTORY, S3_MODEL_NAME)
+            s3_model_key = os.path.join(S3_MODEL_NAME)
             status = self.model_evaluation_config.S3_OPERATIONS.is_model_present(BUCKET_NAME, s3_model_key)
-            s3_model_dir = os.path.join(S3_MODEL_ARTIFACT_DIRECTORY, S3_MODEL_NAME)
+            #s3_model_dir = os.path.join(S3_MODEL_NAME)
 
             if status == True:
-                model = self.model_evaluation_config.S3_OPERATIONS.load_model(MODEL_FILE_NAME, BUCKET_NAME, s3_model_dir)
+                model = self.model_evaluation_config.S3_OPERATIONS.load_model(MODEL_FILE_NAME, BUCKET_NAME)
                 return model
 
             else:
@@ -48,18 +48,19 @@ class ModelEvaluation:
         try:
             test_df = pd.read_csv(self.data_ingestion_artifact.test_data_file_path)
             x, y = test_df.drop(TARGET_COLUMN, axis=1), test_df[TARGET_COLUMN]
+
             trained_model = self.model_evaluation_config.UTILS.load_object(self.model_trainer_artifact.trained_model_file_path)
             y_hat_trained_model = trained_model.predict(x)
-
             trained_model_r2_score = self.model_evaluation_config.UTILS.get_model_score(y, y_hat_trained_model)
+
             s3_model_r2_score = None
             s3_model = self.get_s3_model()
             if s3_model is not None:
                 y_hat_s3_model = s3_model.predict(x)
                 s3_model_r2_score = self.model_evaluation_config.UTILS.get_model_score(y, y_hat_s3_model)
 
-            # calucate how much percentage training model accuracy is increased/decreased
             tmp_best_model_score = 0 if s3_model_r2_score is None else s3_model_r2_score
+
             result = EvaluateModelResponse(trained_model_r2_score=trained_model_r2_score, 
                                             s3_model_r2_score=s3_model_r2_score, 
                                             is_model_accepted=trained_model_r2_score > tmp_best_model_score,
@@ -73,8 +74,8 @@ class ModelEvaluation:
     def initiate_model_evaluation(self) -> ModelEvaluationArtifact:
         try:
             evaluate_model_reaponse = self.evaluate_model()
-            model_evaluataion_artifact = ModelEvaluationArtifact(is_model_accepted=evaluate_model_reaponse.is_model_accepted, 
-                                                                s3_model_path=self.model_trainer_artifact.trained_model_file_path, 
+
+            model_evaluataion_artifact = ModelEvaluationArtifact(is_model_accepted=evaluate_model_reaponse.is_model_accepted,  
                                                                 trained_model_path= self.model_trainer_artifact.trained_model_file_path,
                                                                 changed_accuracy=evaluate_model_reaponse.difference)
             return model_evaluataion_artifact

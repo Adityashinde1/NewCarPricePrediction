@@ -130,11 +130,7 @@ class S3Operation:
         logging.info("Entered the load_model method of S3Operations class")
 
         try:
-            func = (
-                lambda: model_name + MODEL_SAVE_FORMAT
-                if model_dir is None
-                else model_dir + "/" + model_name + MODEL_SAVE_FORMAT
-            )
+            func = (lambda: model_name if model_dir is None else model_dir + "/" + model_name)
 
             model_file = func()
 

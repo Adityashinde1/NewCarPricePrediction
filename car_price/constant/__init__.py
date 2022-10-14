@@ -42,14 +42,12 @@ PREPROCESSOR_OBJECT_FILE_NAME = "car_price_preprocessor.pkl"
 MODEL_TRAINER_ARTIFACTS_DIR = 'ModelTrainerArtifacts'
 MODEL_FILE_NAME = 'car_price_model.pkl'
 
-
 BUCKET_NAME = 'car-price-io-files'
 S3_MODEL_NAME = 'car_price_model.pkl'
-S3_MODEL_ARTIFACT_DIRECTORY = 'artifacts'
 
 
-MODEL_SAVE_FORMAT = '.sav'
-# BEST_MODEL_PATH = ARTIFACTS_DIR + "/" + MODEL_FILE_NAME + MODEL_SAVE_FORMAT
+
+MODEL_SAVE_FORMAT = '.pkl'
 
 APP_HOST = '0.0.0.0'
 APP_PORT = 8080
