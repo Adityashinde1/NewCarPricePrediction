@@ -19,9 +19,7 @@ class S3Operation:
         self.s3_resource = boto3.resource("s3")
 
     @staticmethod
-    def read_object(
-        object_name: str, decode: bool = True, make_readable: bool = False
-    ) -> Union[StringIO, str]:
+    def read_object(object_name: str, decode: bool = True, make_readable: bool = False) -> Union[StringIO, str]:
         """
         Method Name :   read_object
         Description :   This method reads the object_name object with kwargs
@@ -50,6 +48,7 @@ class S3Operation:
         except Exception as e:
             raise e
 
+   
     def get_bucket(self, bucket_name: str) -> Bucket:
         """
         Method Name :   get_bucket
@@ -72,6 +71,21 @@ class S3Operation:
 
         except Exception as e:
             raise e
+        
+    def is_model_present(self, bucket_name: str, s3_model_key: str) -> bool:
+        try:
+            bucket = self.get_bucket(bucket_name)
+            status = None
+            file_objects = [file_object for file_object in bucket.objects.filter(Prefix=s3_model_key)]
+            if len(file_objects) > 0:
+                status == True
+            else:
+                status == False
+            return status
+
+        except Exception as e:
+            raise e
+
 
     def get_file_object(self, filename: str, bucket_name: str) -> Union[List[object], object]:
         """

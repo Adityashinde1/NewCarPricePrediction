@@ -61,9 +61,9 @@ class CarData:
 
 
 class CarPricePredictor:
-    def __init__(self):
-        self.s3 = S3Operation()
-        self.s3_config = S3Config()
+    def __init__(self, s3: S3Operation, s3_config: S3Config):
+        self.s3 = s3
+        self.s3_config = s3_config
 
 
     def predict(self, X) -> None:

@@ -3,6 +3,8 @@ import sys
 from typing import Dict, Tuple, List
 import dill
 import xgboost
+import numpy as np
+import pandas as pd
 import yaml
 from pandas import DataFrame
 from sklearn.metrics import r2_score
@@ -25,6 +27,16 @@ class MainUtils:
             raise CarException(e, sys) from e
 
 
+    def write_json_to_yaml_file(self, json_file: dict, yaml_file_path: str) -> yaml:
+        try:
+            data = json_file
+            stream = open(yaml_file_path, 'w')
+            yaml.dump(data, stream)
+
+        except Exception as e:
+            raise CarException(e, sys) from e
+
+
     def read_schema_file_path(self) -> dict:
         try:
             schema_config = self.read_yaml_file(SCHEMA_FILE_PATH)
@@ -38,6 +50,26 @@ class MainUtils:
         try:
             model_config = self.read_yaml_file(MODEL_CONFIG_FILE)
             return model_config
+
+        except Exception as e:
+            raise CarException(e, sys) from e
+
+        
+    def save_numpy_array_data(self, file_path: str, array: np.array):
+        try:
+            with open(file_path, 'wb') as file_obj:
+                np.save(file_obj, array)
+
+            return file_path
+
+        except Exception as e:
+            raise CarException(e, sys) from e
+
+
+    def load_numpy_array_data(self, file_path: str) -> np.array:
+        try:
+            with open(file_path, 'rb') as file_obj:
+                return np.load(file_obj)
 
         except Exception as e:
             raise CarException(e, sys) from e
@@ -113,7 +145,10 @@ class MainUtils:
         try:
             with open(file_path, "wb") as file_obj:
                 dill.dump(obj, file_obj)
+
             logging.info("Exited the save_object method of MainUtils class")
+
+            return file_path
 
         except Exception as e:
             raise CarException(e, sys) from e
