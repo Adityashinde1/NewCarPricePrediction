@@ -158,6 +158,7 @@ class DataValidation:
             os.makedirs(self.data_validation_config.DATA_VALIDATION_ARTIFACTS_DIR, exist_ok=True)
             logger.info(f"Created Artifatcs directory for {os.path.basename(self.data_validation_config.DATA_VALIDATION_ARTIFACTS_DIR)}")
             drift = self.detect_dataset_drift(self.train_set, self.test_set)
+
             (
                 schema_train_col_status,
                 schema_test_col_status,
