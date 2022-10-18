@@ -84,7 +84,7 @@ class MainUtils:
             model.fit(train_x, train_y)
             preds = model.predict(test_x)
             model_score = self.get_model_score(test_y, preds)
-            logging.info("Entered the get_tuned_model method of MainUtils class")
+            logging.info("Exited the get_tuned_model method of MainUtils class")
             return model_score, model, model.__class__.__name__
 
         except Exception as e:

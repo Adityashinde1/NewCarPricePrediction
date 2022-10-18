@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 import logging
-import os
 import sys
 import pandas as pd
 from car_price.exception import CarException
@@ -30,16 +29,14 @@ class ModelEvaluation:
 
     def get_s3_model(self) -> object:
         try:
-            s3_model_key = os.path.join(S3_MODEL_NAME)
-            status = self.model_evaluation_config.S3_OPERATIONS.is_model_present(BUCKET_NAME, s3_model_key)
-            #s3_model_dir = os.path.join(S3_MODEL_NAME)
+            status = self.model_evaluation_config.S3_OPERATIONS.is_model_present(BUCKET_NAME, S3_MODEL_NAME)
 
             if status == True:
                 model = self.model_evaluation_config.S3_OPERATIONS.load_model(MODEL_FILE_NAME, BUCKET_NAME)
                 return model
 
             else:
-                pass
+                return None
 
         except Exception as e:
             raise CarException(e, sys) from e
